@@ -4,9 +4,8 @@ import { useRouter } from 'next/router';
 import { useEffect } from "react";
 import { useForm } from 'react-hook-form';
 import Link from 'next/link';
-import { Login, Signup } from '../Services/login.service';
-import { GoogleLogin, GoogleLogout, useGoogleLogin } from "react-google-login";
-import ReactDOM from 'react-dom';
+import { Login, Signup } from '../services';
+import { GoogleLogin } from "react-google-login";
 
 // import { getUsers, updateDB, updateUserLogin } from '../Redux/actions/UsersAction';
 
@@ -26,7 +25,7 @@ const SignIn = () => {
       if (res.status !== 200) throw res
       const user = res.data.token;
       localStorage.setItem("token", JSON.stringify(user));
-      router.push('/landing');
+      router.push('/');
       console.log('res');
       console.log(res);
     }).catch(e => {
@@ -51,7 +50,7 @@ const SignIn = () => {
     //   localStorage.setItem("db", JSON.stringify(db));
     // }
     if (JSON.parse(localStorage.getItem("token"))) {
-      router.push('/landing');
+      router.push('/');
     }
   }, [])
 
@@ -74,7 +73,6 @@ const SignIn = () => {
         checkAccount(data, 'google')
       })
     }
-
   }
 
 

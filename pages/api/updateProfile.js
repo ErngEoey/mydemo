@@ -9,14 +9,6 @@ export default async function handler(req, res) {
   const data = req.body
   console.log(data)
   req.headers.access_token = data.token
-  // let formData = new FormData();
-  // formData.append('username', data.data.username)
-  // formData.append('current_password', data.data.currentPass)
-  // formData.append('password', data.data.password)
-  // formData.append('confirm_password', data.data.confirmPass)
-  // formData.append('email', data.data.email)
-  // formData.append('firstname', data.data.fname)
-  // formData.append('lastname', data.data.lname)
 
   var formUrl = qs.stringify({
     'username': data.data.username,
@@ -30,12 +22,11 @@ export default async function handler(req, res) {
 
   const config = {
     method: req.method,
-    url: "https://0af5-58-11-27-222.ngrok.io" + '/updateprofileuser',
+    url: "http://70bb-27-145-207-169.ngrok.io" + '/updateprofileuser',
     data: formUrl,
     headers: {
       "Content-type": 'application/x-www-form-urlencoded',
       Authorization: "Bearer " + data.token,
-      // ...data.getHeaders(),
     },
   };
   const response = await To(axios(config))

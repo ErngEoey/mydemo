@@ -9,10 +9,6 @@ export default async function handler(req, res) {
     req, '/logout'
   )
   const response = await To(axios(config))
-  // console.log('response')
-  // console.log(response)
-
-  // const index = db.find(x => (x.username === username) && x.password === password);
 
   res.status(response?.status).json(response?.data)
 }

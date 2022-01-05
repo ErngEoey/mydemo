@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/router';
-import { SignOut } from '../Services/login.service';
+import { SignOut } from '../services/login.service';
 
 const Header = () => {
   const router = useRouter();

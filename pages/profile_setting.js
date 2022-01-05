@@ -1,15 +1,13 @@
-import Link from 'next/link'
 import React, { useState } from 'react'
 import { useQuery, useQueryClient } from 'react-query';
-import { getProfile } from '../Services/profile.service';
+import { getProfile, updateProfile } from '../services';
 import { useEffect } from "react";
 import { useRouter } from 'next/router';
 import { useForm } from 'react-hook-form';
-import { updateProfile } from '../Services/profile.service';
 
 export default function Profile_setting() {
   const queryClient = useQueryClient()
-  const { register: setting, handleSubmit, formState: { errors }, watch, setValue } = useForm();
+  const { register: setting, handleSubmit, formState: { errors }, watch, setValue, clearErrors} = useForm();
   const {
     register: setPass,
     formState: { errors: errorPass },
@@ -63,7 +61,7 @@ export default function Profile_setting() {
       data.password = update.password;
       data.confirmPass = update.confirmPass;
     }
-    console.log('data for update');
+    console.log('v--data for update--v');
     console.log(data);
     updateProfile(token?.access_token, data).then(res => {
       console.log(res)
@@ -100,8 +98,8 @@ export default function Profile_setting() {
           setUsernameUsed(true);
         if (e.data.message.search('current') !== -1)
           setWrongPass(true);
-        if (e.data.message.search('Same') !== -1)
-          setSamePass(true);
+        // if (e.data.message.search('Same') !== -1)
+        //   setSamePass(true);
       }
     })
   }
@@ -118,13 +116,10 @@ export default function Profile_setting() {
     setWrongPass(false)
   }, [watchPass('currentPass')])
 
-  useEffect(() => {
-    setSamePass(false)
-  }, [watchPass('password')])
+  // useEffect(() => {
+  //   setSamePass(false)
+  // }, [watchPass('password')])
 
-  function test() {
-
-  }
 
   return (
     <body>
@@ -141,7 +136,7 @@ export default function Profile_setting() {
                   <div className="col-md-9 text-secondary">
                     <p className="edit-profile">
                       <span>{data?.data?.username}</span>
-                      <a id='btnUsername' onClick={() => { setValue('username', data?.data?.username), errors.username = null }} type="button" data-bs-toggle="collapse" data-bs-target="#collapseUsername" aria-expanded="false" aria-controls="collapseUsername">
+                      <a id='btnUsername' onClick={() => { setValue('username', data?.data?.username), clearErrors('username') }} type="button" data-bs-toggle="collapse" data-bs-target="#collapseUsername" aria-expanded="false" aria-controls="collapseUsername">
                         <i className="fas fa-pen icon-edit-username" />
                       </a>
                     </p>
@@ -181,7 +176,7 @@ export default function Profile_setting() {
                   <div className="col-md-9 text-secondary">
                     <p className="edit-profile">
                       <span>{data?.data?.firstname}</span>
-                      <a id='btnFname' onClick={() => { setValue('fname', data?.data?.firstname), errors.fname = null }} type="button" data-bs-toggle="collapse" data-bs-target="#collapseFirstname" aria-expanded="false" aria-controls="collapseFirstname">
+                      <a id='btnFname' onClick={() => { setValue('fname', data?.data?.firstname), clearErrors('fname') }} type="button" data-bs-toggle="collapse" data-bs-target="#collapseFirstname" aria-expanded="false" aria-controls="collapseFirstname">
                         <i className="fas fa-pen icon-edit-firstname" />
                       </a>
                     </p>
@@ -189,7 +184,7 @@ export default function Profile_setting() {
                       <div className="card card-body">
                         <div className="mb-3 form-group">
                           <label htmlFor="firstname" className="form-label">Firstname</label>
-                          <input defaultValue={data?.data?.firstname} type="text" className={`form-control ${errors.fname ? 'is-invalid' : ''}`} id="firstname" {...setting('fname',
+                          <input defaultValue={data?.data?.firstname} type="text" className={`form-control ${(errors.fname) && 'is-invalid'}`} id="firstname" {...setting('fname',
                             { required: true }
                           )} />
                         </div>
@@ -208,7 +203,7 @@ export default function Profile_setting() {
                   <div className="col-md-9 text-secondary">
                     <p className="edit-profile">
                       <span>{data?.data?.lastname}</span>
-                      <a id='btnLname' onClick={() => { setValue('lname', data?.data?.lastname), errors.lname = null }} type="button" data-bs-toggle="collapse" data-bs-target="#collapseLastname" aria-expanded="false" aria-controls="collapseLastname">
+                      <a id='btnLname' onClick={() => { setValue('lname', data?.data?.lastname), clearErrors('lname') }} type="button" data-bs-toggle="collapse" data-bs-target="#collapseLastname" aria-expanded="false" aria-controls="collapseLastname">
                         <i className="fas fa-pen icon-edit-lastname" />
                       </a>
                     </p>
@@ -237,7 +232,7 @@ export default function Profile_setting() {
                       <span>{data?.data?.email}</span>
                       {
                         google == false &&
-                        <a id='btnEmail' onClick={() => { setValue('email', data?.data?.email), errors.email = null }} type="button" data-bs-toggle="collapse" data-bs-target="#collapseEmail" aria-expanded="false" aria-controls="collapseEmail">
+                        <a id='btnEmail' onClick={() => { setValue('email', data?.data?.email), clearErrors('email') }} type="button" data-bs-toggle="collapse" data-bs-target="#collapseEmail" aria-expanded="false" aria-controls="collapseEmail">
                           <i className="fas fa-pen icon-edit-email" />
                         </a>
                       }
@@ -310,21 +305,22 @@ export default function Profile_setting() {
                           </div>
                           <div className="mb-3 form-group">
                             <label htmlFor="password" className="form-label">New Password</label>
-                            <input type="password" className={`form-control ${errorPass.password || samePass ? 'is-invalid' : ''}`} id="password" {...setPass('password',
+                            <input type="password" className={`form-control ${errorPass.password ? 'is-invalid' : ''}`} id="password" {...setPass('password',
                               {
                                 required: true,
                                 minLength: { value: 8, message: 'At least 8 characters.' },
-                                pattern: { value: /^[a-zA-Z0-9]+$/, message: 'Wrong pattern' }
+                                pattern: { value: /^[a-zA-Z0-9]+$/, message: 'Wrong pattern' },
+                                validate: value => value != watchPass("currentPass") || 'Do not use the same password as the current password.'
                               })} />
                             <div id="validationServer05Feedback" className="invalid-feedback">
                               {errorPass.password?.message}
                             </div>
-                            {
+                            {/* {
                               samePass &&
                               <div id="isTaken">
                                 Do not use the same password as the current password.
                               </div>
-                            }
+                            } */}
                           </div>
                           <div className="mb-3 form-group">
                             <label htmlFor="password" className="form-label">Confirm New Password</label>

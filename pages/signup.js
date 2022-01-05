@@ -1,12 +1,12 @@
 import React, { useState } from 'react'
 import { useRouter } from 'next/router';
 import _, { isNull } from 'lodash';
-import { getUsers, updateDB, updateUserLogin } from '../Redux/actions/UsersAction'
-import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
 import { useForm } from 'react-hook-form';
 import Link from 'next/link';
-import { Login, Signup } from '../Services/login.service';
+import { Login, Signup } from '../services';
+// import { getUsers, updateDB, updateUserLogin } from '../Redux/actions/UsersAction'
+// import { useDispatch, useSelector } from "react-redux";
 
 const SignUp = () => {
   const router = useRouter();
@@ -32,7 +32,7 @@ const SignUp = () => {
       Login(data).then(res2 => {
         if (res2.status !== 200) throw res2
         localStorage.setItem("token", JSON.stringify(res2.data.token));
-        router.push('/landing');
+        router.push('/');
         console.log('res2');
         console.log(res2);
       }).catch(e => {
@@ -87,7 +87,7 @@ const SignUp = () => {
     //   localStorage.setItem("db", JSON.stringify(db));
     // }
     if (JSON.parse(localStorage.getItem("token"))) {
-      router.push('/landing');
+      router.push('/');
     }
   }, [])
 
