@@ -1,0 +1,8 @@
+.header
+{
+    /*background-color: rgb(47, 51, 80);*/
+    background-image: url("/img/picture3.jpg");
+    height: 120vh;
+    background-size: cover;
+    background-position: center;
+}

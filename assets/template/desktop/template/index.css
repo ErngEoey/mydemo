@@ -1,0 +1,165 @@
+.page-landing .site-header{
+    background-color: #4b80f3;
+    background: linear-gradient(to right, #4b80f3, #f78b4d);
+    font-size: 18px;
+    /*background-image: url("/restgo-affiliate/apps/img/picture3.jpg");*/
+    height: 60vh;
+    background-size: cover;
+    background-position: center;
+}
+/*.page-landing .site-header .nav-link.logo {
+    background-color: #fff;
+    border-bottom-right-radius: 4rem;
+    margin-bottom: 0.5rem;
+}
+.page-landing .site-header .nav-link.logo img {
+    max-width: 100px;
+}
+.page-landing nav .navbar{
+    background-color: rgb(255, 255, 255);
+}.page-landing .navbar-nav{
+    padding: 0 3rem 0 3rem;
+}
+.page-landing .header-icon a {
+    width: 100px;
+}
+.page-landing .navbar-nav li a
+{
+    float: right;
+    color: rgb(10, 10, 10)!important;
+}
+.page-landing .navbar-brand img
+{
+    width: 150px;
+    margin-left: 30px;
+}*/
+.page-landing .btn-outline-primary{
+    color: #ffffff;
+    border-color: transparent;
+}
+
+/*-------------------welcome text------------------*/
+.welcome{
+    padding: 50px 100px;
+    margin-top: -140px;
+    background-color: #fff;
+    box-shadow: 0 0 20px 7px rgba(0,0,0,0.2);
+    border-radius: 6px;
+}
+
+.welcome h1{
+    color: #333;
+}
+.welcome .btn-readmore{
+    margin-top: 10px;
+    padding: 10px 30px;
+    border-radius: 30px;
+    color: #fff;
+    background-color: #013f7e;
+    border-color: #013f7e;
+}
+.welcome .btn:focus{
+    box-shadow: none;
+}
+
+/*-------------------about us------------------*/
+.about{
+    padding-top: 3rem;
+    padding-bottom: 2rem;
+}
+.about .col-md-6{
+    padding-left: 2rem;
+    /*padding: 20px 20px;*/
+}
+.about h3{
+    margin: 20px auto;
+}
+.img-travel{
+    max-width: 100%;
+    width: 560px;
+    height: 315px;
+    border-radius: 4px;
+}
+
+/*-------------------guide------------------*/
+.guide{
+    padding-bottom: 2rem;
+}
+.guide .col-md-6{
+    padding-right: 2rem;
+    /*padding: 20px 20px;*/
+}
+.guide h3{
+    margin: 20px auto;
+}
+
+/*-------------------download------------------*/
+.download{
+    padding-top: 1rem;
+    padding-bottom: 2rem;
+}
+.download .col-md-6{
+    padding-left: 2rem;
+    /*padding: 20px 20px;*/
+}
+.download h3{
+    margin: 20px auto;
+}
+.img-travel{
+    max-width: 100%;
+    width: 560px;
+    height: 315px;
+}
+
+/*-------------------Pricing------------------*/
+.pricing{
+    padding-bottom: 2rem;
+}
+.box-content {
+    display: flex;
+    flex-direction: column;
+    border: 1px solid rgb(165, 165, 165);
+    border-radius: 0.25rem;
+}
+.box-header {
+    padding: 0.5rem 1rem;
+    margin-bottom: 0;
+}
+.icon-color.fas.fa-check-circle {
+    color: gray;
+}
+.w-textcontent {
+    height: 20vh;
+}
+.btn-pricing {
+    width: 100%;
+}
+.pricing h1{
+    margin: 20px auto;
+}
+.pricing h2.price-red{
+    color: red;
+}
+.pricing a{
+    font-weight : bold;
+    color: black;
+}
+a.prc:hover{
+    color: rgb(0, 81, 233);
+}
+.pricing .row{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+.pricing .col-3{
+    width: calc(25% - .5rem);
+}
+.icon-color-green{
+    color: rgb(13, 231, 13);
+}
+
+/*-------------------Calculate------------------*/
+.calculate-content{
+    margin-bottom: 3rem;
+}

@@ -1,356 +1,400 @@
-import React, { useState } from 'react'
-import { useQuery, useQueryClient } from 'react-query';
-import { getProfile, updateProfile } from '../services';
-import { useEffect } from "react";
-import { useRouter } from 'next/router';
-import { useForm } from 'react-hook-form';
+import React from 'react';
 
-export default function Profile_setting() {
-  const queryClient = useQueryClient()
-  const { register: setting, handleSubmit, formState: { errors }, watch, setValue, clearErrors} = useForm();
-  const {
-    register: setPass,
-    formState: { errors: errorPass },
-    handleSubmit: handleSubmitPass,
-    watch: watchPass,
-    setValue: setValue2
-  } = useForm();
-
-  const router = useRouter();
-  const [token, setToken] = useState(undefined);
-  const [usernameUsed, setUsernameUsed] = useState(false);
-  const [emailUsed, setEmailUsed] = useState(false);
-  const [wrongPass, setWrongPass] = useState(false);
-  const [samePass, setSamePass] = useState(false);
-  const [google, setGoogle] = useState(false);
-
-  useEffect(() => {
-    setToken(JSON.parse(localStorage.getItem("token")));
-    if (!JSON.parse(localStorage.getItem("token"))) {
-      router.push('/signin')
-    }
-  }, [])
-
-  const { data, isLoading, isError } = useQuery(token ? "getUser" : undefined, token ? () => getProfile(token?.access_token) : undefined)
-
-  // console.log("v-- get data user --v");
-  // console.log(data);
-
-  useEffect(() => {
-    if (data?.data.type_of_person_id == 'google') {
-      setGoogle(true);
-    }
-  }, [data])
-
-  async function updateAccount(update, type) {
-    console.log('updateAccount')
-    console.log(update)
-    console.log(type)
-    let data = {}
-
-    if (type == 'username') {
-      data.username = update.username
-    } else if (type == 'fname') {
-      data.fname = update.fname
-    } else if (type == 'lname') {
-      data.lname = update.lname
-    } else if (type == 'email') {
-      data.email = update.email
-    } else if (type == 'password') {
-      data.currentPass = update.currentPass;
-      data.password = update.password;
-      data.confirmPass = update.confirmPass;
-    }
-    console.log('v--data for update--v');
-    console.log(data);
-    updateProfile(token?.access_token, data).then(res => {
-      console.log(res)
-      if (res.status !== 200) throw res
-      queryClient.invalidateQueries('getUser')
-
-      if (type == 'username') {
-        console.log('click username')
-        document.getElementById("btnUsername").click();
-      }
-
-      if (type == 'fname') {
-        document.getElementById("btnFname").click();
-      }
-
-      if (type == 'lname') {
-        document.getElementById("btnLname").click();
-      }
-
-      if (type == 'email') {
-        document.getElementById("btnEmail").click();
-      }
-
-      if (update.currentPass != update.password) {
-        document.getElementById("btnPass").click();
-      }
-
-    }).catch(e => {
-      console.log('error', e)
-      if (e.status == 400) {
-        if (e.data.message.search('Email') !== -1)
-          setEmailUsed(true);
-        if (e.data.message.search('Username') !== -1)
-          setUsernameUsed(true);
-        if (e.data.message.search('current') !== -1)
-          setWrongPass(true);
-        // if (e.data.message.search('Same') !== -1)
-        //   setSamePass(true);
-      }
-    })
-  }
-
-  useEffect(() => {
-    setUsernameUsed(false)
-  }, [watch('username')])
-
-  useEffect(() => {
-    setEmailUsed(false)
-  }, [watch('email')])
-
-  useEffect(() => {
-    setWrongPass(false)
-  }, [watchPass('currentPass')])
-
-  // useEffect(() => {
-  //   setSamePass(false)
-  // }, [watchPass('password')])
-
-
+export default function ProfileSetting() {
   return (
-    <body>
-      {isLoading ? <></> : <> <main className="side-profile">
-        <div className="container">
-          <div className="col md-4">
-            <div className="shadow card mb-3 mt-3 content">
-              <h1 className="m-3 pt-3">Profile Setting</h1>
-              <div className="card-body">
-                <div className="row">
-                  <div className="col-md-3">
-                    <h5>Username
-                    </h5></div>
-                  <div className="col-md-9 text-secondary">
-                    <p className="edit-profile">
-                      <span>{data?.data?.username}</span>
-                      <a id='btnUsername' onClick={() => { setValue('username', data?.data?.username), clearErrors('username') }} type="button" data-bs-toggle="collapse" data-bs-target="#collapseUsername" aria-expanded="false" aria-controls="collapseUsername">
-                        <i className="fas fa-pen icon-edit-username" />
-                      </a>
-                    </p>
-                    <div className="collapse" id="collapseUsername">
-                      <div className="card card-body">
-                        <div className="mb-3 form-group">
-                          <label htmlFor="username" className="form-label">Username</label>
-                          <input defaultValue={data?.data?.username} type="text" className={`form-control ${(errors.username || usernameUsed) && 'is-invalid'}`} id="username" {...setting('username',
-                            {
-                              required: true,
-                              maxLength: { value: 255, message: 'Maximum at 255 characters.' },
-                              minLength: { value: 5, message: 'At least 5 characters.' },
-                              pattern: { value: /^[a-zA-Z0-9]+$/, message: 'Wrong pattern' }
-                            })} />
-                          <div id="validationServer03Feedback" className="invalid-feedback">
-                            {errors.username?.message}
-                          </div>
-                          {
-                            usernameUsed &&
-                            <div id="isTaken">
-                              Username is already taken.
+    <body className="page-profile-data">
+        <header className="site-header">
+          <a href className="nav-link logo">
+            <img src="/img/restgo_logo.png" alt />
+          </a>
+          <div className="nav site-navigator">
+            <a className="nav-link" href>แดชบอร์ด</a>
+            <a className="nav-link disabled" href>เครื่องมือ</a>
+            <a className="nav-link disabled" href>รายงาน</a>
+            <a className="nav-link" href="#">บัญชี</a>
+          </div>
+        </header>
+        <main className="personal-data">
+          <section className="section section-personal">
+            <div className="container">
+              <div className="row">
+                <div className="col-md-12">
+                  <div className="content">
+                    <article className="word-header">
+                      <h3>บัญชี Restgo Affiliate</h3>
+                      <p>รายละเอียดข้อมูลส่วนตัวและช่องทางการติดต่อ</p>
+                    </article>
+                    <div className="input-info mb-3" id="showEmail">
+                      <fieldset>
+                        <form>
+                          <div className="d-flex justify-content-between">
+                            <h4>ข้อมูลบัญชี</h4>
+                            <div className="edit-info">
+                              <a className="btn-edt" id="show-editPsw" role="button">
+                                เปลี่ยนรหัสผ่าน
+                              </a>
                             </div>
-                          }
-                        </div>
-                        <div className="hstack gap-3 edit-information">
-                          <button type="submit" className="btn btn-primary" onClick={handleSubmit((data) => updateAccount(data, 'username'))}>Save</button>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <hr />
-                <div className="row">
-                  <div className="col-md-3">
-                    <h5>Firstname</h5>
-                  </div>
-                  <div className="col-md-9 text-secondary">
-                    <p className="edit-profile">
-                      <span>{data?.data?.firstname}</span>
-                      <a id='btnFname' onClick={() => { setValue('fname', data?.data?.firstname), clearErrors('fname') }} type="button" data-bs-toggle="collapse" data-bs-target="#collapseFirstname" aria-expanded="false" aria-controls="collapseFirstname">
-                        <i className="fas fa-pen icon-edit-firstname" />
-                      </a>
-                    </p>
-                    <div className="collapse" id="collapseFirstname">
-                      <div className="card card-body">
-                        <div className="mb-3 form-group">
-                          <label htmlFor="firstname" className="form-label">Firstname</label>
-                          <input defaultValue={data?.data?.firstname} type="text" className={`form-control ${(errors.fname) && 'is-invalid'}`} id="firstname" {...setting('fname',
-                            { required: true }
-                          )} />
-                        </div>
-                        <div className="hstack gap-3 edit-information">
-                          <button type="submit" className="btn btn-primary" onClick={handleSubmit((data) => updateAccount(data, 'fname'))}>Save</button>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <hr />
-                <div className="row">
-                  <div className="col-md-3">
-                    <h5>Lastname</h5>
-                  </div>
-                  <div className="col-md-9 text-secondary">
-                    <p className="edit-profile">
-                      <span>{data?.data?.lastname}</span>
-                      <a id='btnLname' onClick={() => { setValue('lname', data?.data?.lastname), clearErrors('lname') }} type="button" data-bs-toggle="collapse" data-bs-target="#collapseLastname" aria-expanded="false" aria-controls="collapseLastname">
-                        <i className="fas fa-pen icon-edit-lastname" />
-                      </a>
-                    </p>
-                    <div className="collapse" id="collapseLastname">
-                      <div className="card card-body">
-                        <div className="mb-3 form-group">
-                          <label htmlFor="lastname" className="form-label">Lastname</label>
-                          <input defaultValue={data?.data?.lastname} type="text" className={`form-control ${errors.lname ? 'is-invalid' : ''}`} id="lastname" {...setting('lname',
-                            { required: true }
-                          )} />
-                        </div>
-                        <div className="hstack gap-3 edit-information">
-                          <button type="submit" className="btn btn-primary" onClick={handleSubmit((data) => updateAccount(data, 'lname'))}>Save</button>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <hr />
-                <div className="row">
-                  <div className="col-md-3">
-                    <h5>Email Address</h5>
-                  </div>
-                  <div className="col-md-9 text-secondary">
-                    <p className="edit-profile">
-                      <span>{data?.data?.email}</span>
-                      {
-                        google == false &&
-                        <a id='btnEmail' onClick={() => { setValue('email', data?.data?.email), clearErrors('email') }} type="button" data-bs-toggle="collapse" data-bs-target="#collapseEmail" aria-expanded="false" aria-controls="collapseEmail">
-                          <i className="fas fa-pen icon-edit-email" />
-                        </a>
-                      }
-                    </p>
-                    <div className="collapse" id="collapseEmail">
-                      <div className="card card-body">
-                        <div className="mb-3 form-group">
-                          <label htmlFor="email" className="form-label">Email Address</label>
-                          <input defaultValue={data?.data?.email} type="email" className={`form-control ${(errors.email || emailUsed) ? 'is-invalid' : ''}`} id="email" {...setting('email',
-                            {
-                              required: true,
-                              pattern: { value: /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/, message: 'Please enter a valid email. (name@example.com)' },
-                            })} />
-                          <div id="validationServer03Feedback" className="invalid-feedback">
-                            {errors.email?.message}
                           </div>
-                          {
-                            emailUsed &&
-                            <div id="isTaken">
-                              Email is already taken.
+                          <div className="data-row mb-0">
+                            <dl>
+                              <dt>อีเมล</dt>
+                              <dd>email@address.com</dd>
+                            </dl>
+                          </div>
+                        </form>
+                      </fieldset>
+                    </div>
+                    <div className="d-none" id="edtPsw">
+                      <div className="input-info mb-3">
+                        <div className="d-flex justify-content-between">
+                          <h4>ข้อมูลบัญชี</h4>
+                          <div className="edit-info">
+                            <a className="btn-edt" id="btn-cancleedtPsw" role="button">
+                              ยกเลิก
+                            </a>
+                          </div>
+                        </div>
+                        <div className="row">
+                          <div className="form-group mb-3">
+                            <label className="form-label">
+                              <span>อีเมล</span>
+                            </label>
+                            <div>
+                              <span>email@address.com</span>
                             </div>
-                          }
+                          </div>
                         </div>
-                        <div className="hstack gap-3 edit-information">
-                          <button type="submit" className="btn btn-primary" onClick={handleSubmit((data) => updateAccount(data, 'email'))}>Save</button>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <hr />
-                {
-                  google == false &&
-                  <div className="row">
-                    <div className="col-md-3">
-                      <h5>Password</h5>
-                    </div>
-                    <div className="col-md-9 text-secondary">
-                      <p className="edit-profile">
-                        <span>*************</span>
-                        <a id='btnPass' onClick={() => {
-                          setValue2('currentPass', null),
-                            setValue2('password', null),
-                            setValue2('confirmPass', null),
-                            setWrongPass(false),
-                            errorPass.currentPass = null,
-                            errorPass.password = null,
-                            errorPass.confirmPass = null
-                        }} type="button" data-bs-toggle="collapse" data-bs-target="#collapsePassword" aria-expanded="false" aria-controls="collapsePassword">
-                          <i className="fas fa-pen icon-edit-password" />
-                        </a>
-                      </p>
-                      <div className="collapse" id="collapsePassword">
-                        <div className="card card-body">
-                          <div className="mb-3 form-group">
-                            <label htmlFor="password" className="form-label">Current password</label>
-                            <input type="password" className={`form-control ${errorPass.currentPass || wrongPass ? 'is-invalid' : ''}`} id="password" {...setPass('currentPass',
-                              {
-                                required: true
-                              })} />
+                        <div className="row">
+                          <div className="form-group mb-3">
+                            <label htmlFor="currentpassword" className="form-label d-flex">
+                              <span>รหัสผ่านปัจจุบัน</span>
+                              <span className="ms-1" style={{ color: 'red' }}>*</span>
+                            </label>
+                            <input type="password" className="form-control is-invalid" id="currentpassword" />
                             <div id="validationServer05Feedback" className="invalid-feedback">
-                              {errorPass.currentPass?.message}
+                              รหัสผ่านปัจจุบันไม่ถูกต้อง
                             </div>
-                            {
-                              wrongPass &&
-                              <div id="isTaken">
-                                Current password incorrect.
+                          </div>
+                        </div>
+                        <div className="row">
+                          <div className="form-group mb-3">
+                            <label htmlFor="newpassword" className="form-label d-flex">
+                              <span>รหัสผ่านใหม่</span>
+                              <span className="ms-1" style={{ color: 'red' }}>*</span>
+                            </label>
+                            <input type="password" className="form-control is-invalid" id="newpassword" />
+                            <div id="validationServer05Feedback" className="invalid-feedback">
+                              ห้ามตั้งรหัสผ่านซ้ำกับรหัสผ่านปัจจุบัน
+                            </div>
+                          </div>
+                        </div>
+                        <div className="row">
+                          <div className="form-group mb-3">
+                            <label htmlFor="repeatpassword" className="form-label d-flex">
+                              <span>ยืนยันรหัสผ่านใหม่</span>
+                              <span className="ms-1" style={{ color: 'red' }}>*</span>
+                            </label>
+                            <input type="password" className="form-control is-invalid" id="repeatpassword" />
+                            <div id="validationServer05Feedback" className="invalid-feedback">
+                              รหัสผ่านไม่ตรงกัน โปรดลองอีกครั้ง
+                            </div>
+                          </div>
+                        </div>
+                        <div className="edit-info">
+                          <a className="btn btn-primary" id="btnEmailPsw">บันทึก</a>
+                        </div>
+                        <fieldset>
+                          <div className="position-fixed bottom-0 end-0 p-3" style={{ zIndex: 11 }}>
+                            <div id="ToastbtnEmailPsw" className="toast" role="alert" aria-live="assertive" aria-atomic="true">
+                              <div className="toast-header">
+                                <strong className="me-auto">
+                                  <i className="fas fa-check-circle" />
+                                  บันทึกสำเร็จ!</strong>
+                                <button type="button" className="btn-close" data-bs-dismiss="toast" aria-label="Close" />
                               </div>
-                            }
-                          </div>
-                          <div className="mb-3 form-group">
-                            <label htmlFor="password" className="form-label">New Password</label>
-                            <input type="password" className={`form-control ${errorPass.password ? 'is-invalid' : ''}`} id="password" {...setPass('password',
-                              {
-                                required: true,
-                                minLength: { value: 8, message: 'At least 8 characters.' },
-                                pattern: { value: /^[a-zA-Z0-9]+$/, message: 'Wrong pattern' },
-                                validate: value => value != watchPass("currentPass") || 'Do not use the same password as the current password.'
-                              })} />
-                            <div id="validationServer05Feedback" className="invalid-feedback">
-                              {errorPass.password?.message}
-                            </div>
-                            {/* {
-                              samePass &&
-                              <div id="isTaken">
-                                Do not use the same password as the current password.
+                              <div className="toast-body">
+                                รหัสผ่านใหม่ถูกอัพเดทเรียบร้อยแล้ว
                               </div>
-                            } */}
-                          </div>
-                          <div className="mb-3 form-group">
-                            <label htmlFor="password" className="form-label">Confirm New Password</label>
-                            <input type="password" className={`form-control ${errorPass.confirmPass ? 'is-invalid' : ''}`} id="password" {...setPass('confirmPass',
-                              {
-                                required: true,
-                                validate: value => value === watchPass("password") || 'New Passwords are not identical. Try again.'
-                              })} />
-                            <div id="validationServer05Feedback" className="invalid-feedback">
-                              {errorPass.confirmPass?.message}
                             </div>
                           </div>
-                          <div className="hstack gap-3 edit-information">
-                            <button type="submit" className="btn btn-primary" onClick={handleSubmitPass((data) => updateAccount(data, 'password'))}>Save</button>
+                        </fieldset>
+                      </div>
+                    </div>
+                    <div className="input-info mb-3" id="showpersonal-data">
+                      <fieldset>
+                        <form>
+                          <div className="d-flex justify-content-between">
+                            <h4>ข้อมูลส่วนตัว</h4>
+                            <div className="edit-info">
+                              <a className="btn-edt" id="show-editPersonalData" role="button">
+                                แก้ไข
+                              </a>
+                            </div>
+                          </div>
+                          <div className="data-row">
+                            <dl>
+                              <dt>ชื่อ</dt>
+                              <dd>Nisarat Bunluerat</dd>
+                            </dl>
+                          </div>
+                          <div className="data-row mb-0">
+                            <dl>
+                              <dt>วันเกิด</dt>
+                              <dd>10/05/2000</dd>
+                            </dl>
+                          </div>
+                        </form>
+                      </fieldset>
+                    </div>
+                    <div className="d-none" id="edtPersonalData">
+                      <div className="input-info mb-3">
+                        <div className="d-flex justify-content-between">
+                          <h4>ข้อมูลส่วนตัว</h4>
+                          <div className="edit-info">
+                            <a className="btn-edt" id="btn-canclePersonalData" role="button">
+                              ยกเลิก
+                            </a>
                           </div>
                         </div>
+                        <div className="row">
+                          <div className="form-group col-md-6 mb-3">
+                            <div className="d-flex">
+                              <label htmlFor="firstname" className="form-label">ชื่อ</label>
+                              <span className="ms-1" style={{ color: 'red' }}>*</span>
+                            </div>
+                            <input type="text" className="form-control is-invalid" id="firstname" placeholder="กรอกข้อมูล" defaultValue="Nisarat" />
+                            <div id="validationServer05Feedback" className="invalid-feedback">
+                              จำเป็นต้องกรอกข้อมูล
+                            </div>
+                          </div>
+                          <div className="form-group col-md-6 mb-3">
+                            <div className="d-flex">
+                              <label htmlFor="lastname" className="form-label">นามสกุล</label>
+                              <span className="ms-1" style={{ color: 'red' }}>*</span>
+                            </div>                                            <input type="text" className="form-control is-invalid" id="lastname" placeholder="กรอกข้อมูล" defaultValue="Bunluerat" />
+                            <div id="validationServer05Feedback" className="invalid-feedback">
+                              จำเป็นต้องกรอกข้อมูล
+                            </div>
+                          </div>
+                        </div>
+                        <div className="row">
+                          <div className="form-group mb-3">
+                            <div className="d-flex">
+                              <label htmlFor="birthdate" className="form-label">วันเกิด</label>
+                              <span className="ms-1" style={{ color: 'red' }}>*</span>
+                            </div>
+                            <input type="date" className="form-control is-invalid" id="birthdate" placeholder />
+                            <div id="validationServer05Feedback" className="invalid-feedback">
+                              จำเป็นต้องกรอกข้อมูล
+                            </div>
+                          </div>
+                        </div>
+                        <div className="edit-info">
+                          <a className="btn btn-primary" id="btnPersonal">บันทึก</a>
+                        </div>
+                        <fieldset>
+                          <div className="position-fixed bottom-0 end-0 p-3" style={{ zIndex: 11 }}>
+                            <div id="ToastbtnPersonal" className="toast" role="alert" aria-live="assertive" aria-atomic="true">
+                              <div className="toast-header">
+                                <strong className="me-auto">
+                                  <i className="fas fa-check-circle" />
+                                  บันทึกสำเร็จ!</strong>
+                                <button type="button" className="btn-close" data-bs-dismiss="toast" aria-label="Close" />
+                              </div>
+                              <div className="toast-body">
+                                ข้อมูลส่วนตัวถูกอัพเดทเรียบร้อยแล้ว
+                              </div>
+                            </div>
+                          </div>
+                        </fieldset>
+                      </div>
+                    </div>
+                    <div className="input-info" id="showcontact-data">
+                      <fieldset>
+                        <form>
+                          <div className="d-flex justify-content-between">
+                            <h4>ช่องทางการติดต่อ</h4>
+                            <div className="edit-info">
+                              <a className="btn-edt" id="show-editContactData" role="button">
+                                แก้ไข
+                              </a>
+                            </div>
+                          </div>
+                          <div className="data-row">
+                            <dl>
+                              <dt>ที่อยู่</dt>
+                              <dd>
+                                169 มหาวิทยาลัยบูรพา ถนน ลงหาดบางแสน
+                              </dd>
+                              <dd>
+                                จังหวัดชลบุรี อำเภอเมืองชลบุรี ตำบลแสนสุข 20130
+                              </dd>
+                            </dl>
+                          </div>
+                        </form>
+                      </fieldset>
+                    </div>
+                    <div className="d-none" id="edtContactData">
+                      <div className="input-info" id="showcontact-data">
+                        <fieldset>
+                          <form>
+                            <div className="d-flex justify-content-between">
+                              <h4>ช่องทางการติดต่อ</h4>
+                              <div className="edit-info">
+                                <a className="btn-edt" id="btn-cancleContactData" role="button">
+                                  ยกเลิก
+                                </a>
+                              </div>
+                            </div>
+                            <div className="row">
+                              <div className="form-group mb-3">
+                                <div className="d-flex">
+                                  <label htmlFor="address-detail" className="form-label">ที่อยู่</label>
+                                  <span className="ms-1" style={{ color: 'red' }}>*</span>
+                                </div>
+                                <textarea className="form-control is-invalid" id="address-detail" rows={2} placeholder="กรอกข้อมูล" defaultValue={""} />
+                                <div id="validationServer05Feedback" className="invalid-feedback">
+                                  จำเป็นต้องกรอกข้อมูล
+                                </div>
+                              </div>
+                              <div className="form-group mb-3">
+                                <div className="d-flex">
+                                  <label htmlFor="province" className="form-label">จังหวัด</label>
+                                  <span className="ms-1" style={{ color: 'red' }}>*</span>
+                                </div>
+                                <select className="form-select is-invalid" id="province" required>
+                                  <option selected disabled value>เลือก</option>
+                                  <option>...</option>
+                                  <option>...</option>
+                                </select>
+                                <div id="validationServer05Feedback" className="invalid-feedback">
+                                  จำเป็นต้องเลือกข้อมูล
+                                </div>
+                              </div>
+                              <div className="form-group mb-3">
+                                <div className="d-flex">
+                                  <label htmlFor="district" className="form-label">อำเภอ/เขต</label>
+                                  <span className="ms-1" style={{ color: 'red' }}>*</span>
+                                </div>
+                                <select className="form-select is-invalid" id="district" required>
+                                  <option selected disabled value>เลือก</option>
+                                  <option>...</option>
+                                  <option>...</option>
+                                </select>
+                                <div id="validationServer05Feedback" className="invalid-feedback">
+                                  จำเป็นต้องเลือกข้อมูล
+                                </div>
+                              </div>
+                              <div className="form-group mb-3">
+                                <div className="d-flex">
+                                  <label htmlFor="subdistrict" className="form-label">ตำบล/แขวง</label>
+                                  <span className="ms-1" style={{ color: 'red' }}>*</span>
+                                </div>
+                                <select className="form-select is-invalid" id="subdistrict" required>
+                                  <option selected disabled value>เลือก</option>
+                                  <option>...</option>
+                                  <option>...</option>
+                                </select>
+                                <div id="validationServer05Feedback" className="invalid-feedback">
+                                  จำเป็นต้องเลือกข้อมูล
+                                </div>
+                              </div>
+                              <div className="form-group mb-3">
+                                <div className="d-flex">
+                                  <label htmlFor="zipcode" className="form-label">รหัสไปรษณีย์</label>
+                                  <span className="ms-1" style={{ color: 'red' }}>*</span>
+                                </div>
+                                <input type="text" maxLength={5} className="form-control is-invalid" id="zipcode" placeholder="กรอกข้อมูล" />
+                                <div id="validationServer05Feedback" className="invalid-feedback">
+                                  จำเป็นต้องกรอกข้อมูล
+                                </div>
+                              </div>
+                              <div className="edit-info">
+                                <a className="btn btn-primary" id="btnContact">บันทึก</a>
+                              </div>
+                              <fieldset>
+                                <div className="position-fixed bottom-0 end-0 p-3" style={{ zIndex: 11 }}>
+                                  <div id="ToastbtnContact" className="toast" role="alert" aria-live="assertive" aria-atomic="true">
+                                    <div className="toast-header">
+                                      <strong className="me-auto">
+                                        <i className="fas fa-check-circle" />
+                                        บันทึกสำเร็จ!</strong>
+                                      <button type="button" className="btn-close" data-bs-dismiss="toast" aria-label="Close" />
+                                    </div>
+                                    <div className="toast-body">
+                                      ที่อยู่ถูกอัพเดทเรียบร้อยแล้ว
+                                    </div>
+                                  </div>
+                                </div>
+                              </fieldset>
+                            </div>
+                          </form>
+                        </fieldset>
                       </div>
                     </div>
                   </div>
-                }
-                {
-                  google == false &&
-                  <hr />
-                }
+                </div>
               </div>
             </div>
+          </section>
+        </main>
+        <footer className="site-footer">
+          <div className="container">
+            <div className="footer-personal-data">
+              <div className="row g-3">
+                <div className="col-md-3">
+                  <div className="footer-header">
+                    <h3>แดชบอร์ด</h3>
+                  </div>
+                  <nav className="footer-nav">
+                  </nav>
+                </div>
+                <div className="col-md-3">
+                  <div className="footer-header">
+                    <h3>เครื่องมือ</h3>
+                  </div>
+                  <nav className="footer-nav">
+                  </nav>
+                </div>
+                <div className="col-md-3">
+                  <div className="footer-header">
+                    <h3>รายงาน</h3>
+                  </div>
+                  <nav className="footer-nav">
+                    <a className="nav-link disabled" href>รายงานข้อมูลการจอง</a>
+                  </nav>
+                </div>
+                <div className="col-md-3">
+                  <div className="footer-header">
+                    <h3>การใช้งาน</h3>
+                  </div>
+                  <nav className="footer-nav">
+                    <a className="nav-link disabled" href>คู่มือการใช้งาน</a>
+                    <a className="nav-link disabled" href>วิธีการทำงาน</a>
+                  </nav>
+                </div>
+              </div>
+            </div>
+            <div className="about-us">
+              <a className="nav-link logo" href>
+                <img src="/img/restgo_logo.png" alt />
+              </a>
+              <article className="salogan">
+                <p className="mb-0">
+                  ค้นหาโรงแรมราคาถูกกับ Rest go โดยใช้เครื่องมือการค้นหาโรงแรมเพื่อหาดีลโรงแรมที่ถูกที่สุดของจุดหมายปลายทางหลักทั้งหมดจากทั่วโลก
+                </p>
+                <p>Get the best prices on 2,000,000+ properties, worldwide</p>
+              </article>
+            </div>
+            <div className="copyright">
+              <p className="mb-0">© 2021 Tenfuse Co., Ltd. All Rights Reserved.</p>
+              <nav className="policy-link d-flex">
+                <a className="nav-link disabled" href>Privacy Policy</a>
+                <a className="nav-link disabled" href>Cookie Policy</a>
+              </nav>
+            </div>
           </div>
-        </div>
-      </main></>}
-
+        </footer>
     </body>
   )
 }

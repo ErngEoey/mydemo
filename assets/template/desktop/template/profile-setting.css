@@ -1,0 +1,254 @@
+/* header */
+
+.page-profile-data .site-header {
+    display: flex;
+    align-items: center;
+    background-color: #0036a0;
+    z-index: 1000;
+}
+
+.page-profile-data .site-header .nav-link.logo {
+    background-color: #fff;
+    border-bottom-right-radius: 4rem;
+    margin-bottom: 0.5rem;
+    padding: 0.75rem 2rem 0.75rem 0.75rem;
+}
+.page-profile-data .site-header .nav-link.logo img {
+    max-width: 100px;
+}
+.page-profile-data .site-header .nav.site-navigator a {
+    color: #fff;
+}
+/* header */
+
+/* .personal-data .section {
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+}
+
+.personal-data .section.section-info {
+    background-color: #edeff3;
+}
+
+.personal-data .section .nav.nav-pills {
+    background-color: #fff;
+    display: flex;
+    flex-direction: column;
+    padding: 0.75rem;
+    height: 100%;
+    border-radius: 0.5rem;
+}
+
+.profile-setting .section .user-menu {
+    display: block;
+}
+
+
+.profile-setting .section.section-info .row-info {
+    border-bottom: 1px solid #dee2e6;
+    padding-bottom: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+.profile-setting .section.section-info .form-info {
+    flex-direction: column;
+}
+
+.profile-setting .section.section-info .edt .edt-img {
+    background-color: #fff;
+    border-radius: 0.5rem;
+    margin-bottom: 1rem;
+    height: 8rem;
+}
+
+.profile-setting .section.section-info .edt .edt-info {
+    background-color: #fff;
+    padding: 0.75rem;
+    border-radius: 0.5rem;
+}
+
+.profile-setting .section .row-info p.edit-profile {
+    display: flex;
+    justify-content: space-between;
+}
+.profile-setting .section .row-info .btn-save {
+    font-size: 13px;
+}
+.profile-setting .section .row-info a.edt {
+    color: #6c757d;
+}
+.profile-setting .section .row-info a.edt:hover {
+    color: #4b4b4b;
+} */
+
+
+/* main */
+
+.personal-data .section-personal {
+    background-color: #edeff3;
+}
+.personal-data .section-personal .content {
+    margin: 3rem 16rem;
+}
+.personal-data .section-personal article.word-header h3 {
+    font-size: 1.50rem;
+    font-weight: 400;
+}
+.personal-data .section-personal article.word-header p {
+    margin-bottom: 2rem;
+}
+.personal-data .section-personal .step, .step .step-first, .step .step-second {
+    display: flex;
+}
+.personal-data .content .step {
+    display: flex;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+.personal-data .content .step span {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 2px solid #0036a0;
+    width: 1.5rem;
+    height: 1.5rem;
+    border-radius: 50%;
+}
+.personal-data .content .step .step-first.span-active span, .step-second.span-active span {
+    background-color: #0036a0;
+    color: #fff;
+}
+
+.personal-data .content .step p {
+    margin-bottom: 0;
+}
+
+.personal-data .content .step .text-line{
+    width: 20%;
+    position: relative;
+    text-align: center;
+    z-index: 1;
+}
+.personal-data .content .step .text-line::after{
+    content: '';
+    border-bottom: 1.75px solid rgb(204, 204, 204);
+    width: 100%;
+    position: absolute;
+    left: 0;
+    top: 50%;
+    z-index: -1;
+}
+
+.personal-data .content .input-info, .email-info, .emailPsw-info {
+    background-color: #fff;
+    border-radius: 5px;
+    padding: 2rem;
+}
+.personal-data .content .email-info.mail-padding {
+    padding: 1.5rem 2rem;
+}
+.personal-data .content .email-info {
+    margin-bottom: 1rem;
+    display: flex;
+    justify-content: space-between;
+}
+.personal-data .content label {
+    font-size: 90%;
+    color: #333333;
+}
+.personal-data .content .email-info p, .emailPsw-info p {
+    margin-bottom: 0;
+    margin-left: 2rem;
+}
+.personal-data .content .input-info h4,.email-info h4 {
+    font-size: 1.25rem;
+    margin-bottom: 1rem;
+}
+.personal-data .content .input-info .btn-next, .edit-info {
+    display: flex;
+    justify-content: flex-end;
+}
+.personal-data .content .input-info .btn-next a, .btn-save button {
+    width: 5rem;
+}
+.personal-data .content .input-info .btn-step-second {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.personal-data .content .input-info .back-step .btn-back {
+    padding-left: 0;
+    color: #0036a0;
+    text-decoration: none;
+}
+.personal-data .content .input-info .back-step .btn-back i {
+    font-size: 1.25rem;
+    margin-right: .5rem;
+}
+.personal-data .content .input-info .data-row {
+    border-bottom: 1px solid #dee2e6;
+    margin-bottom: 0.5rem;
+}
+.personal-data .content .input-info dt {
+    color: #85939a;
+    font-size: 90%;
+    margin-bottom: .5rem;
+}
+.personal-data .content .input-info .modal-head-success {
+    border-bottom: none;
+}
+.personal-data .content .input-info .modal-body-success {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin: 1.5rem 1rem 2rem 1rem;
+}
+.personal-data .content .input-info .modal-body-success i {
+    font-size: 50px;
+    color: rgb(25, 185, 3);
+    margin-bottom: 1rem;
+}
+.personal-data .content .toast-header i {
+    color: rgb(25, 185, 3);
+}
+/* main */
+
+
+
+/* footer */
+.page-profile-data .site-footer {
+    background-color: #edeff3;
+    padding-top: 2.5rem;
+    padding-bottom: 1rem;
+    border-top: 1px solid #ced4da;
+}
+.page-profile-data .site-footer .container .footer-personal-data {
+    margin: 0 6rem 0 6rem;
+}
+.page-profile-data .site-footer .footer-header h3 {
+    margin-bottom: .5rem;
+    font-size: 1.25rem;
+    font-weight: 400;
+}
+.page-profile-data .site-footer .footer-nav .nav-link {
+    padding-left: 0;
+}
+.page-profile-data .site-footer .about-us {
+    margin-top: 2rem;
+    text-align: center;
+}
+.page-profile-data .site-footer .about-us .logo, .site-footer .about-us .slogan {
+    margin-bottom: .5rem;
+}
+.page-profile-data .site-footer a.logo img {
+    width: 120px;
+}
+.page-profile-data .site-footer .copyright {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-top: 0.5rem;
+    font-size: 85%;
+    border-top: 1px solid #ced4da;
+}
+/* footer */

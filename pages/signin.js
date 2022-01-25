@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { useDispatch, useSelector } from "react-redux";
 import { useRouter } from 'next/router';
 import { useEffect } from "react";
 import { useForm } from 'react-hook-form';
@@ -7,15 +6,16 @@ import Link from 'next/link';
 import { Login, Signup } from '../services';
 import { GoogleLogin } from "react-google-login";
 
-// import { getUsers, updateDB, updateUserLogin } from '../Redux/actions/UsersAction';
-
-const SignIn = () => {
-  const dispatch = useDispatch();
-  // const db = useSelector((state) => state.users.db);
+export default function SignIn() {
   const router = useRouter();
   const { register: signin, handleSubmit, formState: { errors } } = useForm();
   const [failSignIn, setFailSignIn] = useState(false);
-  let clientId;
+
+  useEffect(() => {
+    localStorage.removeItem('is_enable')
+    localStorage.removeItem('verify_token');
+    localStorage.removeItem('email');
+  }, [])
 
   function checkAccount(data, type) {
     console.log(data);
@@ -25,34 +25,42 @@ const SignIn = () => {
       if (res.status !== 200) throw res
       const user = res.data.token;
       localStorage.setItem("token", JSON.stringify(user));
-      router.push('/');
       console.log('res');
       console.log(res);
+      if (res.data.data.verify_email) {
+        if (res.data.data.is_enable) {
+          router.push('/')
+        } else {
+          router.push('/personal_setting')
+        }
+      } else {
+        localStorage.setItem("is_enable", JSON.stringify(res.data.data.is_enable));
+        router.push('/verify_email')
+      }
+
     }).catch(e => {
       console.log('login error ', e)
-      setFailSignIn(true)
+      if (e.status == 400) {
+        if (e.data.message.search('Please verify') !== -1) {
+          var toastLive = document.getElementById('ToastVerify');
+          var toast = new bootstrap.Toast(toastLive)
+          toast.show()
+        } else {
+          setFailSignIn(true)
+        }
+      } else {
+        var toastLive = document.getElementById('ToastError');
+        var toast = new bootstrap.Toast(toastLive)
+        toast.show()
+      }
     })
-    // db = JSON.parse(localStorage.getItem("db"));
-    // const index = db.findIndex(x => (x.email === data.email || x.username === data.email) && x.password === data.password);
-    // console.log(index + "erng");
-
-    // if (index > -1) {
-    //   dispatch(updateUserLogin(index));
-    //   localStorage.setItem("user", JSON.stringify(JSON.parse(localStorage.getItem("db"))[index]));
-    //   router.push('/account');
-    // } else {
-    //   setFailSignIn(true);
-    // }
   }
 
-  useEffect(() => {
-    // if (!JSON.parse(localStorage.getItem("db"))) {
-    //   localStorage.setItem("db", JSON.stringify(db));
-    // }
-    if (JSON.parse(localStorage.getItem("token"))) {
-      router.push('/');
-    }
-  }, [])
+  // useEffect(() => {
+  //   if (JSON.parse(localStorage.getItem("token"))) {
+  //     router.push('/');
+  //   }
+  // }, [])
 
   const responseGoogle = (response) => {
     console.log(response)
@@ -75,24 +83,66 @@ const SignIn = () => {
     }
   }
 
-
   return (
-    <body>
-      <div className="global-container">
-        <div className="card signin-form">
-          <div className="card-body">
-            <h1 className="card-title text-center">SIGN IN</h1>
-            <div className="card-text">
+    <div className="page-signing">
+      <div className="row">
+        <div className="col-6 p-0">
+          <a href="#" className="logo">
+            <img src="/img/restgo_logo.png" alt />
+          </a>
+          <img className="img-1" src="/img/picture5.jpg" alt />
+        </div>
+        <div className="col-6 p-0">
+          <div className="signing-form">
+            <div className="form-width">
+              <div className="creat-acc">
+                <h3 className="text-center mb-3">ยินดีต้อนรับสู่ Restgo</h3>
+                <p>ร่วมเดินทางไปกับเรา เว็บไซต์ค้นหาที่พักชั้นนำของประเทศไทย </p>
+              </div>
               <fieldset>
                 <form>
                   {
                     failSignIn &&
                     <div className="alert alert-danger d-flex align-items-center" role="alert">
-                      <i className="fas fa-exclamation-triangle icon-alert"></i>
-                      <span className="ms-2">An error occurred! Try again.</span>
+                      <i className="fas fa-exclamation-triangle icon-alert" />
+                      <span className="ms-2">ขออภัย อีเมลหรือรหัสผ่านของคุณไม่ถูกต้อง</span>
                     </div>
                   }
-
+                  <div className="form-group">
+                    <label htmlFor="email" className="form-label">อีเมล</label>
+                    <input type="email" className={`form-control ${errors.email ? 'is-invalid' : ''}`} id="email" placeholder="email@address.com"
+                      {...signin('email',
+                        {
+                          required: true
+                        })}
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label htmlFor="password" className="form-label">รหัสผ่าน</label>
+                    <input type="password" className={`form-control ${errors.password || errors.email ? 'is-invalid' : ''}`} id="password" placeholder="กรุณากรอกรหัสผ่าน"
+                      {...signin('password',
+                        {
+                          required: true
+                        })}
+                    />
+                  </div>
+                  <div className="form-group">
+                    <div className="hstack justify-content-between">
+                      <div className="form-check">
+                        <input className="form-check-input" type="checkbox" defaultValue id="flexCheckDefault" />
+                        <label className="form-check-label" htmlFor="flexCheckDefault">
+                          จดจำฉัน
+                        </label>
+                      </div>
+                      <a href="/restgo-affiliate/apps/html/signing/password-forgot.html">ลืมรหัสผ่าน?</a>
+                    </div>
+                  </div>
+                  <a className="mb-3 btn btn-primary btn-block w-100" type="submit" style={{ fontWeight: 'bold' }} onClick={handleSubmit((data) => checkAccount(data, 'normal'))}>
+                    เข้าสู่ระบบ
+                  </a>
+                  <div className="text-line mb-2">
+                    <span>หรือ</span>
+                  </div>
                   <div className="hstack gap-3 social-container">
                     <GoogleLogin
                       clientId="718300339229-9v9iqu9o2mmv9hhaef1pl9ur1k1kchnu.apps.googleusercontent.com"
@@ -101,65 +151,37 @@ const SignIn = () => {
                       cookiePolicy={'single_host_origin'}
 
                       render={renderProps => (
-                        <button onClick={renderProps.onClick} disabled={renderProps.disabled} className='google'>
-                          <span className="logo-wrapper"><img src="/img/logo-google.png" /></span>
-                          <span className="btn-label">Sign in with Google</span>
-                        </button>
+                        <a className="btn google" onClick={renderProps.onClick} disabled={renderProps.disabled}>
+                          <span className="logo-wrapper me-1"><img src="/img/logo-google.png" /></span>
+                          <span className="btn-label"> เข้าใช้งานด้วยบัญชี Google</span>
+                        </a>
                       )}
                     >
                     </GoogleLogin>
-                    <div>
-                      <button className="facebook">
-                        <span className="logo-wrapper"><img src="/img/logo-facebook.png" /></span>
-                        <span className="btn-label">Sign in with Facebook</span>
-                      </button>
-                    </div>
                   </div>
-                  <div className="text-line">
-                    <span>Or</span>
-                  </div>
-
-                  <div className="form-group">
-                    <label htmlFor="email" className="form-label">Username or Email</label>
-                    <input type="email" className={`form-control ${errors.email ? 'is-invalid' : ''}`} id="email" {...signin('email',
-                      {
-                        required: true
-                      })} />
-                    <div id="validationServer05Feedback" className="invalid-feedback">{errors.email?.message}</div>
-                  </div>
-                  <div className="form-group">
-                    <label htmlFor="password" className="form-label">Password</label>
-                    <input type="password" className={`form-control ${errors.password || errors.email ? 'is-invalid' : ''}`} id="password" {...signin('password',
-                      {
-                        required: true
-                      })} />
-                    <div id="validationServer05Feedback" className="invalid-feedback">{errors.password?.message}</div>
-                    <a href="#" style={{ float: 'right', fontSize: 13 }}>Forgot Password?</a>
-                  </div>
-                  <div className="form-group">
-                    <div className="form-check">
-                      <input className="form-check-input" type="checkbox" value="" id="flexCheckDefault" />
-                      <label className="form-check-label" htmlFor="flexCheckDefault">
-                        Remember me
-                      </label>
-                    </div>
-                  </div>
-
-                  <button type="button" className="mb-3 btn btn-primary btn-block w-100" onClick={handleSubmit((data) => checkAccount(data, 'normal'))}>
-                    Sign In
-                  </button>
                   <div className="signin-signup">
-                    Do you not have an account ? <Link href='/signup'><a>Signup</a></Link>
+                    <p>คุณยังไม่มีบัญชีใช่หรือไม่? <Link href='/signup'><a>ลงทะเบียน</a></Link></p>
                   </div>
-
+                  <div className="signin-signup">
+                    ยอมรับ <a href="#">ข้อกำหนดการใช้งาน</a> และ <a href="#">นโยบายความเป็นส่วนตัว</a>
+                  </div>
                 </form>
               </fieldset>
             </div>
           </div>
         </div>
       </div>
-    </body>
+      <div className="position-fixed bottom-0 end-0 p-3" style={{ zIndex: 11 }}>
+        <div id="ToastError" className="toast" role="alert" aria-live="assertive" aria-atomic="true">
+          <div className="toast-header">
+            <strong className="me-auto"><i className="fas fa-exclamation-circle"></i> Failed!</strong>
+            <button type="button" className="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+          </div>
+          <div className="toast-body">
+            Server not available. Please try again later.
+          </div>
+        </div>
+      </div>
+    </div>
   )
 }
-
-export default SignIn

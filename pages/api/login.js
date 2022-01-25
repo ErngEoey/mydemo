@@ -9,17 +9,14 @@ export default async function handler(req, res) {
   console.log("data-->", data)
 
   let formData = new FormData();
+  formData.append('email', data.email)
 
   if (data.type == 'normal') {
-    formData.append('username', data.email)
     formData.append('password', data.password)
-    formData.append('type_person', data.type)
     console.log('formData')
     console.log(formData)
   } else {
-    formData.append('username', data.email)
     formData.append('google_id', data.googleId)
-    formData.append('type_person', data.type)
     console.log('formData')
     console.log(formData)
   }

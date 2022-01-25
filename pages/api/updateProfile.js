@@ -20,9 +20,12 @@ export default async function handler(req, res) {
     'email': data.data.email
   });
 
+  console.log('formUrl to update')
+  console.log(formUrl)
+
   const config = {
     method: req.method,
-    url: "http://70bb-27-145-207-169.ngrok.io" + '/updateprofileuser',
+    url: "http://ffad-171-100-79-34.ngrok.io" + '/updateprofileuser',
     data: formUrl,
     headers: {
       "Content-type": 'application/x-www-form-urlencoded',
@@ -32,4 +35,6 @@ export default async function handler(req, res) {
   const response = await To(axios(config))
 
   res.status(response.status).json(response.data)
+  // setTimeout(() => {res.status(response.status).json(response.data) }, 10000);
+  
 }

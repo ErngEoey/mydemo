@@ -1,0 +1,70 @@
+.header
+{
+    /*background-color: rgb(47, 51, 80);*/
+    background-image: url("/restgo-affiliate/apps/img/picture3.jpg");
+    height: 100vh;
+    background-size: cover;
+    background-position: center;
+}
+header.head{
+    background-color: rgb(255, 255, 255);
+}
+.header-icon a {
+    width: 100px;
+}
+.navbar-nav li a
+{
+    float: right;
+    color: rgb(10, 10, 10)!important;
+}
+.navbar-brand img
+{
+    width: 150px;
+    margin-left: 30px;
+}
+.navbar-toggler
+{
+    border: none!important;
+    outline: none!important;
+}
+nav .fa-bars
+{
+    color: #fff;
+    font-size: 26px;
+}
+.welcome .form {
+    display: flex;
+    align-items: center;
+    height: 5rem;
+    width: 80rem;
+    border-radius: 5rem;
+    background: #fff;
+    margin: 2rem 0;
+}
+.welcomeMessage {
+    position: relative;
+    text-align: center;
+    margin-top: 15rem;
+    margin-bottom: 15rem;
+    font-size: 75px;
+    color: white;
+}
+.welcomeMessage h1{
+    line-height: 1.3;
+    font-weight: 700;
+    margin-top: 0;
+    margin-bottom: 4px;
+    overflow: hidden;
+    -webkit-animation: fadein 1s;
+    animation: fadein 1s;
+    text-transform: uppercase;
+    font-size: 45px;
+}
+.welcomeMessage h2 {
+    margin-bottom: 0;
+    font-weight: 400;
+    font-size: 25px;
+}
+a.text-pf {
+    margin-bottom: 0;
+}
